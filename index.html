@@ -156,14 +156,16 @@
     };
 
     // Auto-spin po załadowaniu (np. po pokazaniu w OBS)
-    setTimeout(() => {
-      spinWheel();
-
-      // Auto-ukrycie po 10 sekundach
+    document.addEventListener("DOMContentLoaded", () => {
       setTimeout(() => {
-        document.body.style.display = 'none';
-      }, 10000);
-    }, 1000);
+        spinWheel();
+
+        // Auto-ukrycie po 10 sekundach
+        setTimeout(() => {
+          document.body.style.display = 'none';
+        }, 10000);
+      }, 1000);
+    });
   </script>
 </body>
 </html>
