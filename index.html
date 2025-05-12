@@ -154,6 +154,16 @@
     window.spinFromOverlay = () => {
       spinWheel();
     };
+
+    // Auto-spin po załadowaniu (np. po pokazaniu w OBS)
+    setTimeout(() => {
+      spinWheel();
+
+      // Auto-ukrycie po 10 sekundach
+      setTimeout(() => {
+        window.close();
+      }, 10000);
+    }, 1000);
   </script>
 </body>
 </html>
