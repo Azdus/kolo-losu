@@ -157,12 +157,7 @@
         } else {
           spinning = false;
           const resultDiv = document.getElementById("result");
-          resultDiv.innerText = `Wylosowano: ${options[selectedIndex].label}`;
-          resultDiv.style.fontSize = "40px";
-          resultDiv.style.color = "red";
-          resultDiv.style.marginTop = "30px";
-          resultDiv.style.textTransform = "uppercase";
-          resultDiv.style.transition = "all 0.3s ease";
+          resultDiv.innerText = `${options[selectedIndex].label}`;
         }
       }
 
