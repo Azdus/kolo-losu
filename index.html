@@ -7,10 +7,9 @@
     #wheel {
       border: 4px solid #333;
       border-radius: 50%;
-      margin: 0 auto;
+      margin: 20px auto;
       display: block;
     }
-
     #pointer {
       width: 0;
       height: 0;
@@ -23,7 +22,13 @@
       transform: translateX(-50%);
       z-index: 10;
     }
-
+    #spin {
+      display: block;
+      margin: 0 auto;
+      padding: 10px 20px;
+      font-size: 18px;
+      cursor: pointer;
+    }
     #result {
       position: absolute;
       top: 50%;
@@ -45,7 +50,6 @@
       0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
       100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
     }
-
     #container {
       position: relative;
       width: 500px;
@@ -55,14 +59,14 @@
   </style>
 </head>
 <body>
-  <div id="container">
-    <div id="pointer"></div>
-    <canvas id="wheel" width="500" height="500"></canvas>
-    <div id="result"></div>
-  </div>
+  $1
+$2
+      </div>
+    <div id="result" style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:64px; font-weight:900; color:red; -webkit-text-stroke:2px black; text-shadow:2px 2px 5px black; text-align:center; text-transform:uppercase; z-index:100; animation:popIn 0.6s ease;"></div>
 
   <script>
     const options = [
+      { label: "Zeruje browara", weight: 5 },
       { label: "Ban na tydzień", weight: 8 },
       { label: "Kebab/pizza", weight: 8 },
       { label: "50 zł BLIK", weight: 8 },
@@ -138,7 +142,7 @@
 
       const anglePerWeight = 2 * Math.PI / totalWeight;
       const stopAngle = options.slice(0, selectedIndex).reduce((sum, opt) => sum + opt.weight, 0) * anglePerWeight + (options[selectedIndex].weight * anglePerWeight) / 2;
-      const finalAngle = 2 * Math.PI * spins + (Math.PI * 1.5 - stopAngle);
+      const finalAngle = 2 * Math.PI * spins + (Math.PI * 1.5 - stopAngle); // pointer is at 12 o'clock (270°)
       const start = performance.now();
 
       function animate(time) {
@@ -159,14 +163,16 @@
 
       requestAnimationFrame(animate);
     }
-
     window.spinFromOverlay = () => {
       spinWheel();
     };
 
+    // Auto-spin po załadowaniu (np. po pokazaniu w OBS)
     document.addEventListener("DOMContentLoaded", () => {
       setTimeout(() => {
         spinWheel();
+
+        // Auto-ukrycie po 10 sekundach
         setTimeout(() => {
           document.body.style.display = 'none';
         }, 10000);
