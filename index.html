@@ -136,4 +136,42 @@
         }
       }
 
-      const anglePerWeight = 2 * Math.PI*
+      const anglePerWeight = 2 * Math.PI / totalWeight;
+      const stopAngle = options.slice(0, selectedIndex).reduce((sum, opt) => sum + opt.weight, 0) * anglePerWeight + (options[selectedIndex].weight * anglePerWeight) / 2;
+      const finalAngle = 2 * Math.PI * spins + (Math.PI * 1.5 - stopAngle);
+      const start = performance.now();
+
+      function animate(time) {
+        const elapsed = time - start;
+        const progress = Math.min(elapsed / duration, 1);
+        const easeOut = 1 - Math.pow(1 - progress, 3);
+        rotationAngle = finalAngle * easeOut;
+        drawWheel(rotationAngle);
+
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        } else {
+          spinning = false;
+          const resultDiv = document.getElementById("result");
+          resultDiv.innerText = `${options[selectedIndex].label}`;
+        }
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    window.spinFromOverlay = () => {
+      spinWheel();
+    };
+
+    document.addEventListener("DOMContentLoaded", () => {
+      setTimeout(() => {
+        spinWheel();
+        setTimeout(() => {
+          document.body.style.display = 'none';
+        }, 10000);
+      }, 1000);
+    });
+  </script>
+</body>
+</html>
