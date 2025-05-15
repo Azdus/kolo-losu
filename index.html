@@ -182,7 +182,7 @@
 
           const audioFile = audioMap[resultText];
           if (audioFile) {
-            const audioUrl = `${audioFile}`;
+            const audioUrl = `https://azdus.github.io/kolo-losu/${audioFile}`;
             fetch(audioUrl, { method: 'HEAD' })
               .then(res => {
                 if (res.ok) {
