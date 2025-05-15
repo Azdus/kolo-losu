@@ -85,13 +85,17 @@
       { label: "Zwracam Ci punkty", weight: 8 }
     ];
 
-    const canvas = document.getElementById("wheel");
-    const ctx = canvas.getContext("2d");
+    let canvas, ctx;
+document.addEventListener("DOMContentLoaded", () => {
+  canvas = document.getElementById("wheel");
+  ctx = canvas.getContext("2d");
+});
     const totalWeight = options.reduce((sum, opt) => sum + opt.weight, 0);
     let rotationAngle = 0;
     let spinning = false;
 
     function drawWheel(angleOffset = 0) {
+      if (!ctx) return;
       ctx.clearRect(0, 0, 500, 500);
       let currentAngle = angleOffset;
       options.forEach(option => {
