@@ -163,6 +163,24 @@
           const resultText = `${options[selectedIndex].label}`;
           resultDiv.innerText = resultText;
 
+          // Przygotowanie ścieżki do dźwięku
+          const sanitizedText = resultText.toLowerCase()
+            .replace(/ /g, '_')
+            .replace(/ł/g, 'l')
+            .replace(/ó/g, 'o')
+            .replace(/ż/g, 'z')
+            .replace(/ź/g, 'z')
+            .replace(/ś/g, 's')
+            .replace(/ń/g, 'n')
+            .replace(/ć/g, 'c')
+            .replace(/ę/g, 'e')
+            .replace(/ą/g, 'a')
+            .replace(/-/g, 'minus')
+            .replace(/[\/]/g, '_');
+
+          const audio = new Audio(`${sanitizedText}.mp3`);
+          audio.play();
+
           // Czytanie wyniku na głos
           const utterance = new SpeechSynthesisUtterance(resultText);
           utterance.lang = 'pl-PL';
