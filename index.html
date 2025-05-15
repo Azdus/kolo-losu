@@ -163,7 +163,7 @@
           const resultText = `${options[selectedIndex].label}`;
           resultDiv.innerText = resultText;
 
-          // Odtwórz dźwięk na podstawie tekstu
+          // Mapowanie nazw opcji na pliki dźwiękowe
           const audioMap = {
             "Zeruje browara": "zeruje_browara.mp3",
             "Kebab/pizza": "kebab_pizza.mp3",
@@ -183,45 +183,8 @@
           const audioFile = audioMap[resultText];
           if (audioFile) {
             const audio = new Audio(audioFile);
-            audio.play();
+            audio.play().catch(e => console.warn("Błąd odtwarzania dźwięku:", e));
           }
-
-          // Przygotowanie ścieżki do dźwięku
-          const sanitizedText = resultText.toLowerCase()
-            .replace(/ /g, '_')
-            .replace(/ł/g, 'l')
-            .replace(/ó/g, 'o')
-            .replace(/ż/g, 'z')
-            .replace(/ź/g, 'z')
-            .replace(/ś/g, 's')
-            .replace(/ń/g, 'n')
-            .replace(/ć/g, 'c')
-            .replace(/ę/g, 'e')
-            .replace(/ą/g, 'a')
-            .replace(/-/g, 'minus')
-            .replace(/[\/]/g, '_');
-
-
-          // Czytanie wyniku na głos
-          const utterance = new SpeechSynthesisUtterance(resultText);
-          utterance.lang = 'pl-PL';
-          utterance.rate = 1.0;
-          const audioPath = `${resultText.toLowerCase()
-            .replace(/ /g, '_')
-            .replace(/ł/g, 'l')
-            .replace(/ó/g, 'o')
-            .replace(/ż/g, 'z')
-            .replace(/ź/g, 'z')
-            .replace(/ś/g, 's')
-            .replace(/ń/g, 'n')
-            .replace(/ć/g, 'c')
-            .replace(/ę/g, 'e')
-            .replace(/ą/g, 'a')
-            .replace(/-/g, 'minus')
-            .replace(/[\/]/g, '_')}.mp3`;
-
-          const audio = new Audio(audioPath);
-          audio.play();
           }
         }
       }
