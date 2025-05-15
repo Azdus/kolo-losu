@@ -182,8 +182,17 @@
 
           const audioFile = audioMap[resultText];
           if (audioFile) {
-            const audio = new Audio(audioFile);
-            audio.play().catch(e => console.warn("Błąd odtwarzania dźwięku:", e));
+            const audioUrl = `${audioFile}`;
+            fetch(audioUrl, { method: 'HEAD' })
+              .then(res => {
+                if (res.ok) {
+                  const audio = new Audio(audioUrl);
+                  audio.play().catch(e => console.warn("Błąd odtwarzania dźwięku:", e));
+                } else {
+                  console.warn("Plik dźwiękowy nie istnieje:", audioUrl);
+                }
+              })
+              .catch(err => console.warn("Błąd sprawdzania pliku:", err));
           }
           }
         }
