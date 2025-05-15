@@ -167,7 +167,6 @@
           const utterance = new SpeechSynthesisUtterance(resultText);
           utterance.lang = 'pl-PL';
           utterance.rate = 1.0;
-          // Odtwarzanie dźwięku zamiast syntezatora mowy
           const audioPath = `${resultText.toLowerCase()
             .replace(/ /g, '_')
             .replace(/ł/g, 'l')
