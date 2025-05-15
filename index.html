@@ -82,7 +82,7 @@
       { label: "Kebab/pizza", weight: 8 },
       { label: "50 zł BLIK", weight: 8 },
       { label: "VIP", weight: 3 },
-      { label: "Stanie na głowie", weight: 8 },
+      { label: "Stanie na głowie", weight: 90 },
       { label: "Timeout 1h", weight: 8 },
       { label: "-10k punktów", weight: 8 },
       { label: "Ban na dzień dla widza", weight: 8 },
@@ -176,6 +176,12 @@
           utterance.lang = 'pl-PL';
           utterance.rate = 1.0;
           speechSynthesis.speak(utterance);
+
+          // Odtwórz dźwięk jeśli to "Stanie na głowie"
+          if (resultText === "Stanie na głowie") {
+            const audio = new Audio("stanie_na_glowie.mp3");
+            audio.play();
+          }
         }
       }
 
