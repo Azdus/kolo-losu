@@ -57,12 +57,8 @@
       margin: 0 auto;
     }
   </style>
-  <style>
-    
-  </style>
 </head>
 <body>
-  
   <div id="container">
     <div id="pointer"></div>
     <canvas id="wheel" width="500" height="500"></canvas>
@@ -74,7 +70,7 @@
       { label: "Kebab/pizza", weight: 8 },
       { label: "50 zł BLIK", weight: 8 },
       { label: "VIP", weight: 3 },
-      { label: "Stanie na głowie", weight: 90 },
+      { label: "Stanie na głowie", weight: 8 },
       { label: "Timeout 1h", weight: 8 },
       { label: "-10k punktów", weight: 8 },
       { label: "Ban na dzień dla widza", weight: 8 },
@@ -85,17 +81,13 @@
       { label: "Zwracam Ci punkty", weight: 8 }
     ];
 
-    let canvas, ctx;
-document.addEventListener("DOMContentLoaded", () => {
-  canvas = document.getElementById("wheel");
-  ctx = canvas.getContext("2d");
-});
+    const canvas = document.getElementById("wheel");
+    const ctx = canvas.getContext("2d");
     const totalWeight = options.reduce((sum, opt) => sum + opt.weight, 0);
     let rotationAngle = 0;
     let spinning = false;
 
     function drawWheel(angleOffset = 0) {
-      if (!ctx) return;
       ctx.clearRect(0, 0, 500, 500);
       let currentAngle = angleOffset;
       options.forEach(option => {
@@ -167,38 +159,11 @@ document.addEventListener("DOMContentLoaded", () => {
           const resultText = `${options[selectedIndex].label}`;
           resultDiv.innerText = resultText;
 
-          // Mapowanie nazw opcji na pliki dźwiękowe
-          const audioMap = {
-            "Zeruje browara": "zeruje_browara.mp3",
-            "Kebab/pizza": "kebab_pizza.mp3",
-            "50 zł BLIK": "50_zl_blik.mp3",
-            "VIP": "vip.mp3",
-            "Stanie na głowie": "stanie_na_glowie.mp3",
-            "Timeout 1h": "timeout_1h.mp3",
-            "-10k punktów": "minus_10k_punktow.mp3",
-            "Ban na dzień dla widza": "ban_na_dzien_dla_widza.mp3",
-            "Zeruje dzika": "zeruje_dzika.mp3",
-            "24h stream": "24h_stream.mp3",
-            "Pije łyka wody": "pije_lyka_wody.mp3",
-            "Nie odzywam się przez 5 minut": "nie_odzywam_sie_przez_5_minut.mp3",
-            "Zwracam Ci punkty": "zwracam_ci_punkty.mp3"
-          };
-
-          const audioFile = audioMap[resultText];
-          if (audioFile) {
-            const audioUrl = `https://azdus.github.io/kolo-losu/${audioFile}`;
-            fetch(audioUrl, { method: 'HEAD' })
-              .then(res => {
-                if (res.ok) {
-                  const audio = new Audio(audioUrl);
-                  audio.play().catch(e => console.warn("Błąd odtwarzania dźwięku:", e));
-                } else {
-                  console.warn("Plik dźwiękowy nie istnieje:", audioUrl);
-                }
-              })
-              .catch(err => console.warn("Błąd sprawdzania pliku:", err));
-          }
-          }
+          // Czytanie wyniku na głos
+          const utterance = new SpeechSynthesisUtterance(resultText);
+          utterance.lang = 'pl-PL';
+          utterance.rate = 1.0;
+          speechSynthesis.speak(utterance);
         }
       }
 
@@ -219,7 +184,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 10000);
       }, 1000);
     });
-  
-</script>
+  </script>
 </body>
 </html>
