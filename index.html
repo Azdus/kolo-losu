@@ -163,25 +163,27 @@
           const resultText = `${options[selectedIndex].label}`;
           resultDiv.innerText = resultText;
 
-          try {
-            const sanitizedText = resultText.toLowerCase()
-              .replace(/ /g, '_')
-              .replace(/ł/g, 'l')
-              .replace(/ó/g, 'o')
-              .replace(/ż/g, 'z')
-              .replace(/ź/g, 'z')
-              .replace(/ś/g, 's')
-              .replace(/ń/g, 'n')
-              .replace(/ć/g, 'c')
-              .replace(/ę/g, 'e')
-              .replace(/ą/g, 'a')
-              .replace(/-/g, 'minus')
-              .replace(/[\/]/g, '_');
+          // Odtwórz dźwięk na podstawie tekstu
+          const audioMap = {
+            "Zeruje browara": "zeruje_browara.mp3",
+            "Kebab/pizza": "kebab_pizza.mp3",
+            "50 zł BLIK": "50_zl_blik.mp3",
+            "VIP": "vip.mp3",
+            "Stanie na głowie": "stanie_na_glowie.mp3",
+            "Timeout 1h": "timeout_1h.mp3",
+            "-10k punktów": "minus_10k_punktow.mp3",
+            "Ban na dzień dla widza": "ban_na_dzien_dla_widza.mp3",
+            "Zeruje dzika": "zeruje_dzika.mp3",
+            "24h stream": "24h_stream.mp3",
+            "Pije łyka wody": "pije_lyka_wody.mp3",
+            "Nie odzywam się przez 5 minut": "nie_odzywam_sie_przez_5_minut.mp3",
+            "Zwracam Ci punkty": "zwracam_ci_punkty.mp3"
+          };
 
-            const audio = new Audio(`${sanitizedText}.mp3`);
-            audio.play().catch(e => console.warn("Audio playback failed:", e));
-          } catch (e) {
-            console.error("Audio trigger error:", e);
+          const audioFile = audioMap[resultText];
+          if (audioFile) {
+            const audio = new Audio(audioFile);
+            audio.play();
           }
 
           // Przygotowanie ścieżki do dźwięku
