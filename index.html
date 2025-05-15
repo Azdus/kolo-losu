@@ -156,7 +156,14 @@
         } else {
           spinning = false;
           const resultDiv = document.getElementById("result");
-          resultDiv.innerText = `${options[selectedIndex].label}`;
+          const resultText = `${options[selectedIndex].label}`;
+          resultDiv.innerText = resultText;
+
+          // Czytanie wyniku na głos
+          const utterance = new SpeechSynthesisUtterance(resultText);
+          utterance.lang = 'pl-PL';
+          utterance.rate = 1.0;
+          speechSynthesis.speak(utterance);
         }
       }
 
