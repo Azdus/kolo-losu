@@ -57,8 +57,20 @@
       margin: 0 auto;
     }
   </style>
+  <style>
+    #unlockAudioBtn {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      z-index: 9999;
+    }
+  </style>
 </head>
 <body>
+  <button id="unlockAudioBtn" onclick="unlockAudio()"></button>
   <div id="container">
     <div id="pointer"></div>
     <canvas id="wheel" width="500" height="500"></canvas>
@@ -184,6 +196,13 @@
         }, 10000);
       }, 1000);
     });
-  </script>
+  function unlockAudio() {
+  // Dummy speech to unlock
+  const utterance = new SpeechSynthesisUtterance("Audio unlocked");
+  utterance.lang = 'pl-PL';
+  speechSynthesis.speak(utterance);
+  document.getElementById('unlockAudioBtn').style.display = 'none';
+}
+</script>
 </body>
 </html>
