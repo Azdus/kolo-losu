@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link href='https://fonts.googleapis.com/css?family=Boldonse' rel='stylesheet'>
+  <link href='https://fonts.googleapis.com/css?family=Boldonse&display=swap' rel='stylesheet'>
+  <link rel="preload" href="https://fonts.googleapis.com/css?family=Boldonse" as="style">
   <title>KOŁO LOSU</title>
   <style>
     html, body {
@@ -104,7 +105,7 @@
     }
     #result-message {
       position: fixed;
-      top: 50%;
+      top: 45%;
       left: 50%;
       transform: translate(-50%, -50%);
       color: white;
@@ -123,8 +124,8 @@
       top: 65%;
       left: 50%;
       transform: translate(-50%, -50%);
-      max-width: 30vw;
-      max-height: 30vh;
+      max-width: 20vw;
+      max-height: 20vh;
       z-index: 3001;
       border-radius: 12px;
       box-shadow: 0 0 30px #000, 0 0 10px #fff;
@@ -223,6 +224,16 @@
   </div>
 </div>
 <script>
+// Natychmiastowa inicjalizacja audio po pierwszym zdarzeniu
+document.addEventListener('DOMContentLoaded', () => {
+  // Spróbuj stworzyć audio context od razu
+  try {
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    isAudioInitialized = true;
+  } catch (e) {
+    console.log('Audio nie może być zainicjalizowane automatycznie');
+  }
+});
 /* ====== PRIZE DEFINITIONS ====== */
 const prizes = [
   {
@@ -237,21 +248,21 @@ const prizes = [
     probability: 0.08,
     type: "regular",
     color: "linear-gradient(135deg,#f9d423,#ff4e50)",
-    gif: "https://cdn.7tv.app/emote/01GQZ4XZN0000F6EB84MM9YR2H/4x.avif"
+    gif: "https://media1.tenor.com/m/g-XhPm-xmNwAAAAC/jasperkasiorka-dawid-jasper.gif"
   },
   {
     name: "Stanie na głowie",
     probability: 0.10,
     type: "regular",
     color: "linear-gradient(135deg, #1d976c, #93f9b9)",
-    gif: ""
+    gif: "https://www.healthshots.com/wp-content/uploads/2019/12/Yoga-headstand.gif"
   },
   {
     name: "Timeout 1h dla wybranego widza",
     probability: 0.10,
     type: "regular",
     color: "linear-gradient(135deg, #009fff, #ec2f4b)",
-    gif: "https://cdn.7tv.app/emote/01HEQCDAB800030WBP0NCYZ0XM/4x.avif"
+    gif: "https://cdn.7tv.app/emote/01H1848QNG0005EZED5J0EYKHR/4x.webp"
   },
   {
     name: "Krzyczę BOKS - STOP",
@@ -265,7 +276,7 @@ const prizes = [
     probability: 0.10,
     type: "regular",
     color: "linear-gradient(135deg, #8e44ad, #3498db)",
-    gif: "https://cdn.7tv.app/emote/01GG0WNRA000052BRE995GXD3V/4x.avif"
+    gif: "https://cdn.7tv.app/emote/01G6SRPZ400006H81S3K13JY36/4x.webp"
   },
   {
     name: "Piję łyka wody (lub Dzika®)",
@@ -286,14 +297,14 @@ const prizes = [
     probability: 0.10,
     type: "regular",
     color: "linear-gradient(135deg, #00C9FF, #92FE9D)",
-    gif: "https://cdn.7tv.app/emote/01G086M3Z00001W70N0KTAHXRF/4x.avif"
+    gif: "https://cdn.7tv.app/emote/01GYZBC7FR0006TGDMK2MFGXGW/4x.webp"
   },
   {
     name: "Stoję w miejscu przez minutę",
     probability: 0.10,
     type: "regular",
     color: "linear-gradient(135deg, #4b6cb7, #182848)",
-    gif: "https://cdn.7tv.app/emote/01GK79ACFR00013V4ZK8HDYKB2/4x.avif"
+    gif: "https://cdn.7tv.app/emote/01GNQJGTSG00078AS6P1AC892Q/4x.webp"
   },
   {
     name: "Nic xd",
@@ -311,9 +322,27 @@ const prizes = [
   }
 ];
 const jackpotPrizes = [
-  {name: "Zeruję browara", probability: 0.50, type: "special", color: "linear-gradient(135deg,#ffef8b,#ff2222)", gif: "https://cdn.7tv.app/emote/01H8CPJG9R0009CBM9NXZQY8HT/4x.avif"},
-  {name: "VIP", probability: 0.30, type: "special", color: "linear-gradient(135deg,#ffb347,#ffcc33)", gif: "https://cdn.7tv.app/emote/01G3E8EC580004KFXXGTW7QDKM/4x.avif"},
-  {name: "STREAM 24H!!!", probability: 0.20, type: "special", color: "linear-gradient(135deg,#ff2222,#fff)", gif: "https://cdn.7tv.app/emote/01J0KSR6D0000CV45TECHJ0JRZ/4x.avif"}
+  {
+    name: "Zeruję browara", 
+    probability: 0.50, 
+    type: "special", 
+    color: "linear-gradient(135deg, #ffe898, #57370e)", 
+    gif: "https://cdn.7tv.app/emote/01H8CPJG9R0009CBM9NXZQY8HT/4x.avif"
+  },
+  {
+    name: "VIP", 
+    probability: 0.30, 
+    type: "special", 
+    color: "linear-gradient(135deg, #ffe898, #57370e)", 
+    gif: "https://cdn.7tv.app/emote/01G3E8EC580004KFXXGTW7QDKM/4x.avif"
+  },
+  {
+    name: "STREAM 24H!!!", 
+    probability: 0.20, 
+    type: "special", 
+    color: "linear-gradient(135deg, #ffe898, #57370e)", 
+    gif: "https://cdn.7tv.app/emote/01J0KSR6D0000CV45TECHJ0JRZ/4x.avif"
+  }
 ];
 const jackpotLightsCount = 30; // for the JACKPOT wheel
 
@@ -338,10 +367,31 @@ function initAudio() {
   if (!isAudioInitialized) {
     try {
       audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      // Próba odblokowania audio context
+      if (audioContext.state === 'suspended') {
+        audioContext.resume().then(() => {
+          console.log('Audio context odblokowany');
+        });
+      }
       isAudioInitialized = true;
     } catch (e) {
       console.log('Web Audio API nie jest obsługiwane');
     }
+  }
+}
+
+// Funkcja do wymuszenia inicjalizacji audio
+function forceAudioInit() {
+  initAudio();
+  // Graj cichy dźwięk żeby odblokować audio
+  if (audioContext && audioContext.state === 'suspended') {
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+    oscillator.start();
+    oscillator.stop(audioContext.currentTime + 0.01);
   }
 }
 
@@ -387,31 +437,85 @@ function playTickSound() {
   oscillator.stop(audioContext.currentTime + 0.1);
 }
 
-// Dźwięk wygranej (melodyjka)
-function playWinSound() {
+function playRegularWinSound() {
   if (!audioContext) return;
-  
-  const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
-  const noteDuration = 0.2;
-  
-  notes.forEach((frequency, index) => {
+
+  const melodies = [
+    [659.25, 783.99, 880, 783.99, 659.25, 880, 1046.50],
+    [530.81, 596, 530.81, 564.81, 596, 530.81, 661.63],
+    [482.41, 498, 516.54, 546.83, 574.61, 510, 530.81, 564.81]
+  ];
+
+  const selectedMelody = melodies[Math.floor(Math.random() * melodies.length)];
+  const noteDuration = 0.16;
+
+  selectedMelody.forEach((frequency, index) => {
     const startTime = audioContext.currentTime + index * noteDuration;
-    
-    const oscillator = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
-    
-    oscillator.connect(gainNode);
-    gainNode.connect(audioContext.destination);
-    
-    oscillator.frequency.setValueAtTime(frequency, startTime);
-    oscillator.type = 'triangle';
-    
-    gainNode.gain.setValueAtTime(0, startTime);
-    gainNode.gain.linearRampToValueAtTime(0.15, startTime + 0.01);
-    gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + noteDuration - 0.01);
-    
-    oscillator.start(startTime);
-    oscillator.stop(startTime + noteDuration);
+    const osc = audioContext.createOscillator();
+    const gain = audioContext.createGain();
+
+    osc.connect(gain);
+    gain.connect(audioContext.destination);
+
+    osc.frequency.setValueAtTime(frequency, startTime);
+    osc.type = 'sine';
+
+    gain.gain.setValueAtTime(0, startTime);
+    gain.gain.linearRampToValueAtTime(0.12, startTime + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.001, startTime + noteDuration - 0.01);
+
+    osc.start(startTime);
+    osc.stop(startTime + noteDuration);
+  });
+}
+
+function playSpecialWinSound() {
+  if (!audioContext) return;
+
+  const melody = [
+   440,     // A4 - start with a mid-range tone
+   523.25,  // C5 - perfect fifth jump
+   659.26,  // E5 - major third up
+   783.99,  // G5 - creates tension
+   1046.5,  // C6 - resolution up an octave
+   1318.5,  // E6 - bright high tone
+   1568,    // G6 - increased tension
+   2093,    // C7 - peak excitement
+   2637,    // E7 - sparkling high note
+   2093,    // C7 - drop back for contrast
+   1568,    // G6 - descending pattern
+   1318.5,  // E6
+   1046.5,  // C6
+   1568,    
+   2093,
+   1568,    
+   2093,
+   1568,    
+   2093,
+   1568,
+   1568,    
+   2093,
+   1568   
+  ];
+  const noteDuration = 0.12;
+
+  melody.forEach((frequency, index) => {
+    const startTime = audioContext.currentTime + index * noteDuration;
+    const osc = audioContext.createOscillator();
+    const gain = audioContext.createGain();
+
+    osc.connect(gain);
+    gain.connect(audioContext.destination);
+
+    osc.frequency.setValueAtTime(frequency, startTime);
+    osc.type = 'sawtooth';
+
+    gain.gain.setValueAtTime(0, startTime);
+    gain.gain.linearRampToValueAtTime(0.14, startTime + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.001, startTime + noteDuration - 0.01);
+
+    osc.start(startTime);
+    osc.stop(startTime + noteDuration);
   });
 }
 
@@ -610,7 +714,7 @@ function drawWheel(prizesArr, angle, isJackpot) {
     ctx.rotate(startAngle + arc/2);
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.font = isJackpot ? "bold 30px Boldonse" : "bold 30px Boldonse";
+    ctx.font = isJackpot ? "bold 50px Boldonse" : "bold 30px Boldonse";
     ctx.fillStyle = "#fff";
     ctx.shadowColor = "#000";
     ctx.shadowBlur = 3;
@@ -826,12 +930,14 @@ function showResult(prize, isJackpot) {
     resultGif = img;
   }
   
-  // Efekt dźwiękowy wygranej
   if (!isJackpot && prize.type === "jackpot") {
-    playJackpotSound(); // Specjalny dźwięk dla jackpotu
-  } else {
-    playWinSound(); // Normalny dźwięk wygranej
+    playJackpotSound();
+  } else if (!isJackpot && prize.type === "regular") {
+    playRegularWinSound();
+  } else if (isJackpot && prize.type === "special") {
+    playSpecialWinSound();
   }
+
   
   // TTS announcement
   let ttsText = "";
@@ -952,9 +1058,49 @@ window.spinFromOverlay = ()=> {
 drawWheel(prizes, 0, false);
 drawWheel(jackpotPrizes, 0, true);
 document.getElementById('jackpot-wheel-container').style.display = "none";
+
 // Inicjalizuj TTS
 initTTS();
-window.onload = ()=>{
+
+// Funkcja czekająca na załadowanie czcionki
+function waitForFont() {
+  return new Promise((resolve) => {
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(() => {
+        resolve();
+      });
+    } else {
+      // Fallback dla starszych przeglądarek - czekaj 1 sekundę
+      setTimeout(resolve, 1000);
+    }
+  });
+}
+
+window.onload = async () => {
+  // Wymuszenie inicjalizacji audio
+  forceAudioInit();
+  
+  // Dodaj niewidoczny przycisk do kliknięcia (dla audio)
+  const hiddenButton = document.createElement('button');
+  hiddenButton.style.position = 'absolute';
+  hiddenButton.style.left = '-9999px';
+  hiddenButton.style.opacity = '0';
+  document.body.appendChild(hiddenButton);
+  
+  // Automatyczne "kliknięcie" dla odblokowania audio
+  setTimeout(() => {
+    hiddenButton.click();
+    hiddenButton.remove();
+  }, 100);
+  
+  // Poczekaj na załadowanie czcionki
+  await waitForFont();
+  
+  // Przerysuj koła z poprawną czcionką
+  drawWheel(prizes, 0, false);
+  drawWheel(jackpotPrizes, 0, true);
+  
+  // Rozpocznij odliczanie
   setTimeout(startCountdown, 400);
 };
 </script>
