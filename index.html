@@ -50,11 +50,11 @@
     #pointer, #jackpot-pointer {
       position: absolute;
       top: 50%;
-      left: 96%;
+      left: 97%;
       transform: translateY(-50%);
       width: 7vmin;
       height: 5vmin;
-      background: #ff2222;
+      background: linear-gradient(90deg, #fcff9e 0%, #c67700 100%);
       clip-path: polygon(0 50%, 100% 75%, 100% 25%);
       box-shadow: 0 0 10px #fff;
       z-index: 1100;
@@ -63,12 +63,13 @@
     }
     #pointer.bounce, #jackpot-pointer.bounce {
       animation: pointerTick 0.2s;
-      transform-origin: 50% 50%;
     }
     @keyframes pointerTick {
-      0% { transform: translateY(-50%) rotate(0deg); }
-      50% { transform: translateY(-50%) rotate(15deg); }
-      100% { transform: translateY(-50%) rotate(0deg); }
+      0% { transform: }
+      50% { transform: rotate(10deg);
+			transform-origin: top left;
+      }
+      100% { transform: }
     }
     #countdown {
       position: absolute;
@@ -101,11 +102,10 @@
       left: 50%;
       z-index: 1301;
       transform: translateX(-50%);
-      transition: opacity 0.3s;
     }
     #result-message {
       position: fixed;
-      top: 50%;
+      top: 45%;
       left: 50%;
       transform: translate(-50%, -50%);
       color: white;
@@ -121,11 +121,11 @@
     }
     #result-gif {
       position: fixed;
-      top: 75%;
+      top: 65%;
       left: 50%;
       transform: translate(-50%, -50%);
-      max-width: 20vw;
-      max-height: 20vh;
+      max-width: 15vw;
+      max-height: 15vh;
       z-index: 3001;
       border-radius: 12px;
       box-shadow: 0 0 30px #000, 0 0 10px #fff;
@@ -143,21 +143,7 @@
       cursor:pointer;
       z-index:1200;
     }
-    #restart-button {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 200px;
-      height: 200px;
-      background: #fff;
-      opacity: 0.04;
-      border: none;
-      cursor: pointer;
-      z-index: 9999;
-      display: none;
-      border-radius: 50%;
-    }
+    /* JACKPOT WHEEL STYLES */
     #jackpot-glow {
       position: absolute;
       top: 25%;
@@ -195,6 +181,7 @@
       background: #ff1111;
       box-shadow: 0 0 24px #ff2222, 0 0 60px #ff0000;
     }
+    /* JACKPOT shimmering effect */
     .shimmer {
       animation: shimmer 1s linear infinite;
     }
@@ -233,11 +220,13 @@
     <button id="jackpot-spin-button"></button>
     <div id="jackpot-glow">JACKPOT</div>
     <div id="label">KOŁO LOSU</div>
+    <!-- Lights will be added dynamically -->
   </div>
 </div>
-<button id="restart-button"></button>
 <script>
+// Natychmiastowa inicjalizacja audio po pierwszym zdarzeniu
 document.addEventListener('DOMContentLoaded', () => {
+  // Spróbuj stworzyć audio context od razu
   try {
     audioContext = new (window.AudioContext || window.webkitAudioContext)();
     isAudioInitialized = true;
@@ -245,130 +234,141 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('Audio nie może być zainicjalizowane automatycznie');
   }
 });
+/* ====== PRIZE DEFINITIONS ====== */
 const prizes = [
-  {
-    name: "Nic xd",
-    probability: 0.08,
-    type: "regular",
-    color: "linear-gradient(135deg, #8e44ad, #3498db)",
-    gif: "https://cdn.7tv.app/emote/01F38SGEQG000AG1XYT03162S8/4x.avif"
-  },
-  {
-    name: "Stanie na głowie",
-    probability: 0.10,
-    type: "regular",
-    color: "linear-gradient(135deg, #1d976c, #93f9b9)",
-    gif: "https://www.healthshots.com/wp-content/uploads/2019/12/Yoga-headstand.gif"
-  },
-  {
-    name: "Timeout 1h dla wybranego widza",
-    probability: 0.08,
-    type: "regular",
-    color: "linear-gradient(135deg, #009fff, #ec2f4b)",
-    gif: "https://cdn.7tv.app/emote/01H1848QNG0005EZED5J0EYKHR/4x.webp"
-  },
-  {
-    name: "Krzyczę BOKS - STOP",
-    probability: 0.08,
-    type: "regular",
-    color: "linear-gradient(135deg, #ff512f, #dd2476)",
-    gif: "https://cdn.7tv.app/emote/01G3SCEE20000AVHF824CCM0DA/4x.avif"
-  },
-  {
-    name: "Nic xd",
-    probability: 0.05,
-    type: "regular",
-    color: "linear-gradient(135deg, #8e44ad, #3498db)",
-    gif: "https://cdn.7tv.app/emote/01G6SRPZ400006H81S3K13JY36/4x.webp"
-  },
-  {
-    name: "Piję łyka wody (lub Dzika®)",
-    probability: 0.08,
-    type: "regular",
-    color: "linear-gradient(135deg, #32c4c0, #8de9d5)",
-    gif: "https://cdn.7tv.app/emote/01GCWH9E9R000D8RDSXFWM2GBA/4x.avif"
-  },
-  {
-    name: "10 pompek",
-    probability: 0.08,
-    type: "regular",
-    color: "linear-gradient(135deg, #fc466b, #3f5efb)",
-    gif: "https://cdn.7tv.app/emote/01F6R3WYDR000B7RB73RKS83AK/4x.avif"
-  },
-  {
-    name: "Nie odzywam się przez 2 minuty",
-    probability: 0.08,
-    type: "regular",
-    color: "linear-gradient(135deg, #00C9FF, #92FE9D)",
-    gif: "https://cdn.7tv.app/emote/01GYZBC7FR0006TGDMK2MFGXGW/4x.webp"
-  },
-  {
-    name: "Stoję w miejscu przez minutę",
-    probability: 0.08,
-    type: "regular",
-    color: "linear-gradient(135deg, #4b6cb7, #182848)",
-    gif: "https://cdn.7tv.app/emote/01GNQJGTSG00078AS6P1AC892Q/4x.webp"
-  },
-  {
-    name: "Krzyczę ło tego",
-    probability: 0.08,
-    type: "regular",
-    color: "linear-gradient(135deg, #8e44ad, #3498db)",
-    gif: "https://cdn.7tv.app/emote/01HZMZNZ1R000A9JQ25Y1DJD63/4x.avif"
-  },
-  {
-    name: "Nic xd",
-    probability: 0.08,
-    type: "regular",
-    color: "linear-gradient(135deg, #bc556f, #f9a470)", 
-    gif: "https://cdn.7tv.app/emote/01FZ975PV8000B4AWRZNMVNEXN/4x.avif"
-  },
-  {
-    name: "Mówię głosem dziwki przez 2 minuty",
-    probability: 0.08,
-    type: "regular",
-    color: "linear-gradient(135deg, #BB377D, #FBD3E9)",
-    gif: "https://media1.tenor.com/m/1SPr0yOrWdgAAAAd/paprikafume-slay-queen.gif"
-  },  
-   {
-    name: "TTS dla wszystkich na 2 minuty",
-    probability: 0.03,
-    type: "regular",
-    color: "linear-gradient(135deg, #00F260, #0575E6)", 
-    gif: "https://cdn.7tv.app/emote/01J7Q3Z76000083R3D97JFXMQB/4x.avif"
-  }, 
-  {
-    name: "JACKPOT",
-    probability: 0.02,
-    type: "jackpot",
-    color: "gold",
-    gif: ""
-  }
+  {
+    name: "Nic xd",
+    probability: 0.08,
+    type: "regular",
+    color: "linear-gradient(135deg, #8e44ad, #3498db)",
+    gif: "https://cdn.7tv.app/emote/01F38SGEQG000AG1XYT03162S8/4x.avif"
+  },
+  {
+    name: "Stanie na głowie",
+    probability: 0.10,
+    type: "regular",
+    color: "linear-gradient(135deg, #1d976c, #93f9b9)",
+    gif: "https://www.healthshots.com/wp-content/uploads/2019/12/Yoga-headstand.gif"
+  },
+  {
+    name: "Timeout 1h dla wybranego widza",
+    probability: 0.08,
+    type: "regular",
+    color: "linear-gradient(135deg, #009fff, #ec2f4b)",
+    gif: "https://cdn.7tv.app/emote/01H1848QNG0005EZED5J0EYKHR/4x.webp"
+  },
+  {
+    name: "Krzyczę BOKS - STOP",
+    probability: 0.08,
+    type: "regular",
+    color: "linear-gradient(135deg, #ff512f, #dd2476)",
+    gif: "https://cdn.7tv.app/emote/01G3SCEE20000AVHF824CCM0DA/4x.avif"
+  },
+  {
+    name: "Nic xd",
+    probability: 0.05,
+    type: "regular",
+    color: "linear-gradient(135deg, #8e44ad, #3498db)",
+    gif: "https://cdn.7tv.app/emote/01G6SRPZ400006H81S3K13JY36/4x.webp"
+  },
+  {
+    name: "Piję łyka wody (lub Dzika®)",
+    probability: 0.08,
+    type: "regular",
+    color: "linear-gradient(135deg, #3F2B96, #A8C0FF)",
+    gif: "https://cdn.7tv.app/emote/01GCWH9E9R000D8RDSXFWM2GBA/4x.avif"
+  },
+  {
+    name: "10 pompek",
+    probability: 0.08,
+    type: "regular",
+    color: "linear-gradient(135deg, #fc466b, #3f5efb)",
+    gif: "https://cdn.7tv.app/emote/01F6R3WYDR000B7RB73RKS83AK/4x.avif"
+  },
+  {
+    name: "Nie odzywam się przez 2 minuty",
+    probability: 0.08,
+    type: "regular",
+    color: "linear-gradient(135deg, #00C9FF, #92FE9D)",
+    gif: "https://cdn.7tv.app/emote/01GYZBC7FR0006TGDMK2MFGXGW/4x.webp"
+  },
+  {
+    name: "Stoję w miejscu przez minutę",
+    probability: 0.08,
+    type: "regular",
+    color: "linear-gradient(135deg, #4b6cb7, #182848)",
+    gif: "https://cdn.7tv.app/emote/01GNQJGTSG00078AS6P1AC892Q/4x.webp"
+  },
+  {
+    name: "krzycze ło tego",
+    probability: 0.08,
+    type: "regular",
+    color: "linear-gradient(135deg, #8e44ad, #3498db)",
+    gif: "https://cdn.7tv.app/emote/01H1AAGAGR0003C6C0Q3R0B0VX/4x.avif"
+  },
+  {
+    name: "Nic xd",
+    probability: 0.08,
+    type: "regular",
+    color: "linear-gradient(135deg, #8e44ad, #3498db)",
+    gif: "https://cdn.7tv.app/emote/01FZ975PV8000B4AWRZNMVNEXN/4x.avif"
+  },
+  {
+    name: "Mówię głosem dziwki przez 2 minuty",
+    probability: 0.08,
+    type: "regular",
+    color: "linear-gradient(135deg, #BB377D, #FBD3E9)",
+    gif: "https://media1.tenor.com/m/1SPr0yOrWdgAAAAd/paprikafume-slay-queen.gif"
+  },  
+   {
+    name: "tts dla wszystkich na 2 minuty",
+    probability: 0.03,
+    type: "regular",
+    color: "linear-gradient(135deg, #BB377D, #FBD3E9)",
+    gif: "https://media1.tenor.com/m/1SPr0yOrWdgAAAAd/paprikafume-slay-queen.gif"
+  }, 
+
+  {
+    name: "JACKPOT",
+    probability: 0.02,
+    type: "jackpot",
+    color: "gold",
+    gif: ""
+  }
 ];
 const jackpotPrizes = [
- {
-    name: "Zeruję piwo", 
-    probability: 0.4, 
+  {
+    name: "wale jajo na łeb", 
+    probability: 0.3, 
+    type: "special", 
+    color: "linear-gradient(135deg, #ffe898, #57370e)", 
+    gif: "https://cdn.7tv.app/emote/01H8CPJG9R0009CBM9NXZQY8HT/4x.avif"
+  },
+  {
+    name: "zerowanie piwa", 
+    probability: 0.3, 
     type: "special", 
     color: "linear-gradient(135deg, #ffe898, #57370e)", 
     gif: "https://cdn.7tv.app/emote/01H8CPJG9R0009CBM9NXZQY8HT/4x.avif"
   },
   {
     name: "VIP", 
-    probability: 0.3, 
+    probability: 0.2, 
     type: "special", 
     color: "linear-gradient(135deg, #ffe898, #57370e)", 
-    gif: "https://cdn.7tv.app/emote/01FRVV7QRG00085N93FNKSBH7T/4x.avif"
+    gif: "https://cdn.7tv.app/emote/01G3E8EC580004KFXXGTW7QDKM/4x.avif"
   },
   {
     name: "STREAM 24H!!!", 
-    probability: 0.3, 
+    probability: 0.2, 
     type: "special", 
     color: "linear-gradient(135deg, #ffe898, #57370e)", 
-    gif: "https://cdn.7tv.app/emote/01GTS711900000JXYVGQX3MQA9/4x.avif"
+    gif: "https://cdn.7tv.app/emote/01J0KSR6D0000CV45TECHJ0JRZ/4x.avif"
   }
 ];
-const jackpotLightsCount = 30; 
+const jackpotLightsCount = 30; // for the JACKPOT wheel
+
+/* ====== STATE ====== */
 let spinning = false;
 let selectedPrizeIndex = null;
 let selectedJackpotIndex = null;
@@ -381,18 +381,15 @@ let resultTimeout = null;
 let resultAnim = null;
 let resultGif = null;
 
+/* ====== AUDIO EFFECTS ====== */
 let audioContext = null;
 let isAudioInitialized = false;
-
-let jackpotLightInterval = null;
-let currentLightIndex = 0;
-
-let prevSeg = { m: -1, j: -1 };
 
 function initAudio() {
   if (!isAudioInitialized) {
     try {
       audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      // Próba odblokowania audio context
       if (audioContext.state === 'suspended') {
         audioContext.resume().then(() => {
           console.log('Audio context odblokowany');
@@ -404,8 +401,11 @@ function initAudio() {
     }
   }
 }
+
+// Funkcja do wymuszenia inicjalizacji audio
 function forceAudioInit() {
   initAudio();
+  // Graj cichy dźwięk żeby odblokować audio
   if (audioContext && audioContext.state === 'suspended') {
     const oscillator = audioContext.createOscillator();
     const gainNode = audioContext.createGain();
@@ -416,6 +416,8 @@ function forceAudioInit() {
     oscillator.stop(audioContext.currentTime + 0.01);
   }
 }
+
+// Dźwięk odliczania (niski ton)
 function playCountdownSound() {
   if (!audioContext) return;
   
@@ -435,6 +437,8 @@ function playCountdownSound() {
   oscillator.start(audioContext.currentTime);
   oscillator.stop(audioContext.currentTime + 0.3);
 }
+
+// Dźwięk "cyk" przy przeskakiwaniu pól
 function playTickSound() {
   if (!audioContext) return;
   
@@ -491,7 +495,29 @@ function playSpecialWinSound() {
   if (!audioContext) return;
 
   const melody = [
-   440, 523.25, 659.26, 783.99, 1046.5, 1318.5, 1568, 2093, 2637, 2093, 1568, 1318.5, 1046.5, 1568, 2093, 1568, 2093, 1568, 2093, 1568, 1568, 2093, 1568   
+   440,     // A4 - start with a mid-range tone
+   523.25,  // C5 - perfect fifth jump
+   659.26,  // E5 - major third up
+   783.99,  // G5 - creates tension
+   1046.5,  // C6 - resolution up an octave
+   1318.5,  // E6 - bright high tone
+   1568,    // G6 - increased tension
+   2093,    // C7 - peak excitement
+   2637,    // E7 - sparkling high note
+   2093,    // C7 - drop back for contrast
+   1568,    // G6 - descending pattern
+   1318.5,  // E6
+   1046.5,  // C6
+   1568,    
+   2093,
+   1568,    
+   2093,
+   1568,    
+   2093,
+   1568,
+   1568,    
+   2093,
+   1568   
   ];
   const noteDuration = 0.12;
 
@@ -514,11 +540,14 @@ function playSpecialWinSound() {
     osc.stop(startTime + noteDuration);
   });
 }
+
+// Dźwięk jackpotu (bardziej dramatyczny)
 function playJackpotSound() {
   if (!audioContext) return;
   
-  const baseFreq = 261.63; 
-  const frequencies = [baseFreq, baseFreq * 1.25, baseFreq * 1.5, baseFreq * 2]; 
+  // Pierwsza część - dramatyczny akord
+  const baseFreq = 261.63; // C4
+  const frequencies = [baseFreq, baseFreq * 1.25, baseFreq * 1.5, baseFreq * 2]; // C, E, G, C
   
   frequencies.forEach((freq, index) => {
     const oscillator = audioContext.createOscillator();
@@ -538,6 +567,7 @@ function playJackpotSound() {
     oscillator.stop(audioContext.currentTime + 1.5);
   });
   
+  // Druga część - melodyjka po 0.3 sekundy
   setTimeout(() => {
     const melody = [523.25, 659.25, 783.99, 1046.50, 783.99, 1046.50]; 
     melody.forEach((frequency, index) => {
@@ -562,9 +592,11 @@ function playJackpotSound() {
   }, 300);
 }
 
+/* ====== TTS FUNCTIONS ====== */
 let selectedVoice = null;
 
 function initTTS() {
+  // Poczekaj na załadowanie głosów
   if (speechSynthesis.getVoices().length === 0) {
     speechSynthesis.addEventListener('voiceschanged', () => {
       selectPolishVoice();
@@ -576,6 +608,7 @@ function initTTS() {
 
 function selectPolishVoice() {
   const voices = speechSynthesis.getVoices();
+  // Szukaj polskiego głosu (różne przeglądarki mają różne nazwy)
   selectedVoice = voices.find(voice => 
     voice.lang.includes('pl') || 
     voice.name.toLowerCase().includes('polish') ||
@@ -583,6 +616,7 @@ function selectPolishVoice() {
     voice.name.toLowerCase().includes('zofia')
   );
   
+  // Jeśli nie ma polskiego, weź pierwszy dostępny
   if (!selectedVoice && voices.length > 0) {
     selectedVoice = voices[0];
   }
@@ -592,6 +626,7 @@ function selectPolishVoice() {
 
 function speakText(text) {
   if ('speechSynthesis' in window) {
+    // Zatrzymaj poprzednie wypowiedzi
     speechSynthesis.cancel();
     
     const utterance = new SpeechSynthesisUtterance(text);
@@ -600,9 +635,10 @@ function speakText(text) {
       utterance.voice = selectedVoice;
     }
     
-    utterance.rate = 1.35; 
-    utterance.pitch = 0.75; 
-    utterance.volume = 0.95; 
+    // Ustawienia głosu
+    utterance.rate = 1.35; // prędkość
+    utterance.pitch = 0.75; // wysokość
+    utterance.volume = 0.95; // głośność
     
     speechSynthesis.speak(utterance);
   } else {
@@ -610,6 +646,7 @@ function speakText(text) {
   }
 }
 
+/* ====== CANVAS CONTEXTS ====== */
 const wheelCanvas = document.getElementById('wheel');
 const wheelCtx = wheelCanvas.getContext('2d');
 const jackpotCanvas = document.getElementById('jackpot-wheel');
@@ -618,27 +655,19 @@ const centerX = wheelCanvas.width / 2;
 const centerY = wheelCanvas.height / 2;
 const radius = wheelCanvas.width / 2 - 30;
 
-const preRenderedWheel = document.createElement('canvas');
-preRenderedWheel.width = wheelCanvas.width;
-preRenderedWheel.height = wheelCanvas.height;
-const preCtx = preRenderedWheel.getContext('2d');
-
-const preRenderedJackpotWheel = document.createElement('canvas');
-preRenderedJackpotWheel.width = jackpotCanvas.width;
-preRenderedJackpotWheel.height = jackpotCanvas.height;
-const preJackpotCtx = preRenderedJackpotWheel.getContext('2d');
-
-
-function drawSegmentsOnCanvas(ctx, prizesArr, isJackpot) {
-  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+/* ====== DRAWING FUNCTIONS ====== */
+function drawWheel(prizesArr, angle, isJackpot) {
+  const ctx = isJackpot ? jackpotCtx : wheelCtx;
+  ctx.clearRect(0, 0, wheelCanvas.width, wheelCanvas.height);
   const total = prizesArr.length;
   const arc = 2 * Math.PI / total;
 
   for (let i = 0; i < total; i++) {
     const prize = prizesArr[i];
-    const startAngle = i * arc;
+    const startAngle = angle + i * arc;
     const endAngle = startAngle + arc;
 
+    // Draw segment background
     ctx.save();
     ctx.beginPath();
     ctx.moveTo(centerX, centerY);
@@ -646,14 +675,16 @@ function drawSegmentsOnCanvas(ctx, prizesArr, isJackpot) {
     ctx.closePath();
 
     if (prize.type === "jackpot" && !isJackpot) {
+      // Main wheel JACKPOT: gold gradient
       const grad = ctx.createRadialGradient(centerX, centerY, radius*0.2, centerX, centerY, radius);
-      grad.addColorStop(0.06, "#ebb059");
-      grad.addColorStop(0.26, "#fcff9e");
-      grad.addColorStop(0.43, "#ffd942");
-      grad.addColorStop(0.75, "#ffd175");
-      grad.addColorStop(1.00, "#c67700");
+      grad.addColorStop(0.06, "#ebb059");   // rgba(235, 176, 89, 1)
+      grad.addColorStop(0.26, "#fcff9e");   // rgba(252, 255, 158, 1)
+      grad.addColorStop(0.43, "#ffd942");   // rgba(255, 217, 66, 1)
+      grad.addColorStop(0.75, "#ffd175");   // rgba(255, 209, 117, 1)
+      grad.addColorStop(1.00, "#c67700");   // rgba(198, 119, 0, 1)
       ctx.fillStyle = grad;
     } else if (typeof prize.color === "string" && prize.color.startsWith("linear-gradient")) {
+      // Parse linear-gradient for canvas
       const match = prize.color.match(/linear-gradient\((\d+)deg,([^,]+),([^)]+)\)/);
       if (match) {
         const angleDeg = parseInt(match[1]);
@@ -675,15 +706,18 @@ function drawSegmentsOnCanvas(ctx, prizesArr, isJackpot) {
       ctx.fillStyle = prize.color || "#3498db";
     }
 
+
     ctx.shadowColor = "#000";
     ctx.shadowBlur = 10;
     ctx.fill();
     ctx.shadowBlur = 10;
 
+    // Segment border
     ctx.strokeStyle = "#000";
     ctx.lineWidth = 3;
     ctx.stroke();
 
+    // Function to truncate text to fit within max width
     function truncateText(ctx, text, maxWidth) {
       let ellipsis = '...';
       let width = ctx.measureText(text).width;
@@ -696,6 +730,7 @@ function drawSegmentsOnCanvas(ctx, prizesArr, isJackpot) {
       return ellipsis;
     }
 
+    // In drawWheel function, for each segment:
     ctx.save();
     ctx.translate(centerX, centerY);
     ctx.rotate(startAngle + arc/2);
@@ -706,17 +741,20 @@ function drawSegmentsOnCanvas(ctx, prizesArr, isJackpot) {
     ctx.shadowColor = "#000";
     ctx.shadowBlur = 3;
     
+
+    // Calculate max width for text (arc length * 0.6 for padding)
     const maxTextWidth = radius * arc * 1.3;
     let label = prize.name;
     label = truncateText(ctx, label, maxTextWidth);
 
+    // Draw text along radius, centered
     ctx.fillText(label, radius * 0.60, 0);
     ctx.shadowBlur = 0;
     ctx.restore();
 
     ctx.restore();
   }
-  
+  // Outer border
   ctx.save();
   ctx.beginPath();
   ctx.arc(centerX, centerY, radius+4, 0, 2*Math.PI);
@@ -729,43 +767,19 @@ function drawSegmentsOnCanvas(ctx, prizesArr, isJackpot) {
   ctx.restore();
 }
 
-function drawWheel(ctx, preRenderedCanvas, angle) {
-  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-  ctx.save();
-  ctx.translate(centerX, centerY);
-  ctx.rotate(angle);
-  ctx.drawImage(preRenderedCanvas, -centerX, -centerY);
-  ctx.restore();
-}
-
-function selectPrizeByProbability(arr, lastIdx) {
-  let selected = -1;
-  let attempts = 0; 
-  
-  while (attempts < 5) { 
-    let r = Math.random();
-    let sum = 0;
-    for (let i = 0; i < arr.length; i++) {
-      sum += arr[i].probability;
-      if (r <= sum) {
-        selected = i;
-        break;
-      }
-    }
-    if (selected === -1) selected = arr.length - 1;
-
-    if (arr.length <= 1) break; 
-
-    if (selected !== lastIdx) {
-      break; 
-    }
-    
-    attempts++;
+/* ====== MAIN WHEEL SPIN LOGIC ====== */
+function selectPrizeByProbability(arr) {
+  let r = Math.random();
+  let sum = 0;
+  for (let i = 0; i < arr.length; i++) {
+    sum += arr[i].probability;
+    if (r <= sum) return i;
   }
-  return selected;
+  return arr.length-1;
 }
 
 function easeInOut(t) {
+  // Fast start, slow end
   return t<0.5 ? 4*t*t*t : 1-(-2*t+2)**3/2;
 }
 
@@ -775,44 +789,42 @@ function spinWheel() {
   isJackpotPhase = false;
   document.getElementById('wheel-container').style.opacity = "1";
   document.getElementById('jackpot-wheel-container').style.display = "none";
-  
-  selectedPrizeIndex = selectPrizeByProbability(prizes, prevSeg.m);
-  
+  // Prize selection (off-screen)
+  selectedPrizeIndex = selectPrizeByProbability(prizes);
+  // Animation params
   const totalSegments = prizes.length;
   const arc = 2*Math.PI/totalSegments;
   const minRot = Math.floor(Math.random() * 5) + 4;  const spinDuration = 4000 + Math.random()*6000;
   const start = performance.now();
   let lastTick = -1;
-  
   function animate(now) {
     let t = Math.min((now-start)/spinDuration,1);
     let eased = easeInOut(t);
     let targetAngle = minRot*2*Math.PI + (arc*selectedPrizeIndex) + arc/2;
     currentAngle = (1-eased)*0 + eased*targetAngle;
-    
-    drawWheel(wheelCtx, preRenderedWheel, -currentAngle);
-    
+    drawWheel(prizes, -currentAngle, false);
+    // JACKPOT shimmer
     const jackpotIdx = prizes.findIndex(p=>p.type==="jackpot");
     if (spinning && jackpotIdx>=0) {
       const jackpotArcStart = -currentAngle + jackpotIdx*arc;
       const jackpotArcEnd = jackpotArcStart + arc;
+      // shimmer: overlay with white arc
       if (document.getElementById('wheel').classList) {
         document.getElementById('wheel').classList.add('shimmer');
         setTimeout(()=>document.getElementById('wheel').classList.remove('shimmer'), 500);
       }
     }
-    
+    // Pointer tick animation
     let tick = Math.floor((currentAngle/(2*Math.PI))*totalSegments)%totalSegments;
     if (tick !== lastTick) {
       pointerBounce();
       lastTick = tick;
     }
-    
     if (t<1) {
       animFrame = requestAnimationFrame(animate);
     } else {
       spinning = false;
-      drawWheel(wheelCtx, preRenderedWheel, -currentAngle);
+      drawWheel(prizes, -currentAngle, false);
       setTimeout(()=>showResult(prizes[selectedPrizeIndex], false),1000);
     }
   }
@@ -822,12 +834,14 @@ function spinWheel() {
 function pointerBounce() {
   const pointer = document.getElementById('pointer');
   pointer.classList.remove('bounce');
-  void pointer.offsetWidth; 
+  void pointer.offsetWidth; // force reflow
   pointer.classList.add('bounce');
   
+  // Dźwięk "cyk" przy przeskakiwaniu
   playTickSound();
 }
 
+/* ====== JACKPOT WHEEL LOGIC ====== */
 function startJackpotPhase() {
   isJackpotPhase = true;
   document.getElementById('wheel-container').style.opacity = "0";
@@ -835,22 +849,8 @@ function startJackpotPhase() {
     document.getElementById('wheel-container').style.display = "none";
     document.getElementById('jackpot-wheel-container').style.display = "block";
     document.getElementById('jackpot-wheel-container').style.opacity = "1";
-    
-    drawWheel(jackpotCtx, preRenderedJackpotWheel, 0);
-    
+    drawWheel(jackpotPrizes, 0, true);
     setupJackpotLights();
-
-    if (jackpotLightInterval) clearInterval(jackpotLightInterval);
-    currentLightIndex = 0;
-    jackpotLightInterval = setInterval(() => {
-      const lights = Array.from(document.querySelectorAll('.jackpot-light'));
-      lights.forEach(l => l.classList.remove('on'));
-      if (lights[currentLightIndex]) {
-        lights[currentLightIndex].classList.add('on');
-      }
-      currentLightIndex = (currentLightIndex + 1) % jackpotLightsCount;
-    }, 75);
-
     setTimeout(spinJackpotWheel, 700);
   }, 500);
 }
@@ -858,35 +858,37 @@ function startJackpotPhase() {
 function spinJackpotWheel() {
   if (spinning) return;
   spinning = true;
-  
-  selectedJackpotIndex = selectPrizeByProbability(jackpotPrizes, prevSeg.j);
-  
+  selectedJackpotIndex = selectPrizeByProbability(jackpotPrizes);
   const totalSegments = jackpotPrizes.length;
   const arc = 2*Math.PI/totalSegments;
   const minRot = 6;
   const spinDuration = 4000 + Math.random()*4000;
   const start = performance.now();
+  let lastLight = -1;
   let lastTick = -1;
-  
   function animate(now) {
     let t = Math.min((now-start)/spinDuration,1);
     let eased = easeInOut(t);
     let targetAngle = minRot*2*Math.PI + (arc*selectedJackpotIndex) + arc/2;
     jackpotCurrentAngle = (1-eased)*0 + eased*targetAngle;
-    
-    drawWheel(jackpotCtx, preRenderedJackpotWheel, -jackpotCurrentAngle);
-    
+    drawWheel(jackpotPrizes, -jackpotCurrentAngle, true);
+    // Animate lights
+    let activeLight = Math.floor((jackpotCurrentAngle/(2*Math.PI))*jackpotLightsCount)%jackpotLightsCount;
+    if (activeLight !== lastLight) {
+      activateJackpotLight(activeLight);
+      lastLight = activeLight;
+    }
+    // Pointer tick animation
     let tick = Math.floor((jackpotCurrentAngle/(2*Math.PI))*totalSegments)%totalSegments;
     if (tick !== lastTick) {
       jackpotPointerBounce();
       lastTick = tick;
     }
-    
     if (t<1) {
       animFrame = requestAnimationFrame(animate);
     } else {
       spinning = false;
-      drawWheel(jackpotCtx, preRenderedJackpotWheel, -jackpotCurrentAngle);
+      drawWheel(jackpotPrizes, -jackpotCurrentAngle, true);
       setTimeout(()=>showResult(jackpotPrizes[selectedJackpotIndex], true),1000);
     }
   }
@@ -899,21 +901,17 @@ function jackpotPointerBounce() {
   void pointer.offsetWidth;
   pointer.classList.add('bounce');
   
+  // Dźwięk "cyk" przy przeskakiwaniu w jackpocie
   playTickSound();
 }
 
 function setupJackpotLights() {
   const cont = document.getElementById('jackpot-wheel-container');
-  if (!cont) return;
-
   Array.from(cont.querySelectorAll('.jackpot-light')).forEach(e => e.remove());
-  
   const containerRect = cont.getBoundingClientRect();
-  if (containerRect.width === 0) return; 
-
   const containerSize = Math.min(containerRect.width, containerRect.height);
-  const radius = containerSize / 2 - 30; 
-  const lightSize = containerSize * 0.04; 
+  const radius = containerSize / 2 - 30; // odstęp od krawędzi koła
+  const lightSize = containerSize * 0.04; // skalowane względem kontenera
   
   for (let i = 0; i < jackpotLightsCount; i++) {
     const angle = (2 * Math.PI * i / jackpotLightsCount) - Math.PI / 2;
@@ -929,19 +927,23 @@ function setupJackpotLights() {
   }
 }
 
-function showResult(prize, isJackpot) {
-  if (isJackpot) {
-    prevSeg.j = selectedJackpotIndex;
-  } else if (prize.type === 'regular') {
-    prevSeg.m = selectedPrizeIndex;
-  }
+function activateJackpotLight(idx) {
+  const lights = Array.from(document.querySelectorAll('.jackpot-light'));
+  lights.forEach((l,i)=>{
+    if(i===idx) l.classList.add('on');
+    else l.classList.remove('on');
+  });
+}
 
+function showResult(prize, isJackpot) {
+  // Remove old
   removeResult();
   const div = document.createElement('div');
   div.id = "result-message";
   div.textContent = prize.name;
   document.body.appendChild(div);
   
+  // Show GIF/AVIF if present
   if (prize.gif) {
     const img = document.createElement('img');
     img.id = "result-gif";
@@ -958,6 +960,8 @@ function showResult(prize, isJackpot) {
     playSpecialWinSound();
   }
 
+  
+  // TTS announcement
   let ttsText = "";
   if (!isJackpot && prize.type === "jackpot") {
     ttsText = "DŻEKPOT! Przechodzę do losowania nagrody specjalnej!";
@@ -967,34 +971,33 @@ function showResult(prize, isJackpot) {
     ttsText = `Wylosowano ${prize.name}`;
   }
   
+  // Opóźnienie TTS żeby było po dźwięku
   setTimeout(() => {
     speakText(ttsText);
   }, 800);
-
-  if (isJackpot || prize.type === 'regular') {
-    document.querySelectorAll('#label').forEach(l => l.style.opacity = '0');
-  }
   
+  // Start blinking lights for jackpot wheel
   if (isJackpot) {
-    if (jackpotLightInterval) clearInterval(jackpotLightInterval);
-
     const lights = Array.from(document.querySelectorAll('.jackpot-light'));
     lights.forEach(light => {
       light.classList.remove('on');
       light.classList.add('jackpot-lights-blink');
     });
     
+    // Hide jackpot wheel after 10 seconds
     resultTimeout = setTimeout(() => {
       removeResult();
       hideWheelSmoothly();
     }, 10000);
   } else {
+    // Regular wheel result timeout
     resultTimeout = setTimeout(() => {
       removeResult();
       hideWheelSmoothly();
     }, 10000);
   }
   
+  // If JACKPOT prize from main wheel, transition to jackpot phase
   if (!isJackpot && prize.type === "jackpot") {
     setTimeout(()=>{
       removeResult();
@@ -1013,38 +1016,26 @@ function removeResult() {
 function hideWheelSmoothly() {
   const wheelContainer = document.getElementById('wheel-container');
   const jackpotContainer = document.getElementById('jackpot-wheel-container');
-  const restartButton = document.getElementById('restart-button');
-
-  const fadeDuration = 500;
-  const delayAfterFade = 1000;
-
-  restartButton.style.display = 'none';
-  restartButton.style.pointerEvents = 'none';
-
-  const fadeOut = (container) => {
-    container.style.transition = `opacity ${fadeDuration / 1000}s ease`;
-    container.style.opacity = '0';
-    setTimeout(() => {
-      container.style.display = 'none';
-      document.querySelectorAll('#label').forEach(l => l.style.opacity = '1');
-    }, fadeDuration);
-  };
-
+  
   if (isJackpotPhase) {
-    fadeOut(jackpotContainer);
-    isJackpotPhase = false;
+    jackpotContainer.style.transition = 'opacity 1s ease';
+    jackpotContainer.style.opacity = '0';
+    setTimeout(() => {
+      jackpotContainer.style.display = 'none';
+      isJackpotPhase = false;
+    }, 1000);
   } else {
-    fadeOut(wheelContainer);
+    wheelContainer.style.transition = 'opacity 1s ease';
+    wheelContainer.style.opacity = '0';
+    setTimeout(() => {
+      wheelContainer.style.display = 'none';
+    }, 1000);
   }
-
-  setTimeout(() => {
-    restartButton.style.display = 'block';
-    restartButton.style.pointerEvents = 'auto';
-  }, delayAfterFade);
 }
 
+/* ====== COUNTDOWN ====== */
 function startCountdown() {
-  document.getElementById('restart-button').style.display = 'none';
+  // Inicjalizuj audio przy pierwszym użyciu
   initAudio();
   
   const cd = document.getElementById('countdown');
@@ -1060,6 +1051,7 @@ function startCountdown() {
     cd.style.opacity = 1;
     cd.style.transition = "opacity 0.4s";
     
+    // Dźwięk odliczania
     playCountdownSound();
     
     setTimeout(()=>{
@@ -1072,20 +1064,27 @@ function startCountdown() {
   next();
 }
 
+/* ====== BUTTON & OBS INTEGRATION ====== */
 document.getElementById('spin-button').onclick = ()=>{
   if (!spinning && !isJackpotPhase) spinWheel();
 };
 document.getElementById('jackpot-spin-button').onclick = ()=>{
   if (!spinning && isJackpotPhase) spinJackpotWheel();
 };
+// For OBS
 window.spinFromOverlay = ()=> {
   if (!spinning && !isJackpotPhase) spinWheel();
 };
 
+/* ====== INITIALIZATION ====== */
+drawWheel(prizes, 0, false);
+drawWheel(jackpotPrizes, 0, true);
 document.getElementById('jackpot-wheel-container').style.display = "none";
 
+// Inicjalizuj TTS
 initTTS();
 
+// Funkcja czekająca na załadowanie czcionki
 function waitForFont() {
   return new Promise((resolve) => {
     if (document.fonts && document.fonts.ready) {
@@ -1093,68 +1092,37 @@ function waitForFont() {
         resolve();
       });
     } else {
+      // Fallback dla starszych przeglądarek - czekaj 1 sekundę
       setTimeout(resolve, 1000);
     }
   });
 }
 
 window.onload = async () => {
+  // Wymuszenie inicjalizacji audio
   forceAudioInit();
   
+  // Dodaj niewidoczny przycisk do kliknięcia (dla audio)
   const hiddenButton = document.createElement('button');
   hiddenButton.style.position = 'absolute';
   hiddenButton.style.left = '-9999px';
   hiddenButton.style.opacity = '0';
   document.body.appendChild(hiddenButton);
   
+  // Automatyczne "kliknięcie" dla odblokowania audio
   setTimeout(() => {
     hiddenButton.click();
     hiddenButton.remove();
   }, 100);
   
+  // Poczekaj na załadowanie czcionki
   await waitForFont();
   
-  drawSegmentsOnCanvas(preCtx, prizes, false);
-  drawSegmentsOnCanvas(preJackpotCtx, jackpotPrizes, true);
+  // Przerysuj koła z poprawną czcionką
+  drawWheel(prizes, 0, false);
+  drawWheel(jackpotPrizes, 0, true);
   
-  drawWheel(wheelCtx, preRenderedWheel, 0);
-
-  const resizeObserver = new ResizeObserver(entries => {
-    for (let entry of entries) {
-      const containerWidth = entry.contentRect.width;
-
-      setupJackpotLights();
-
-      const newFontSize = containerWidth * 0.045;
-      document.querySelectorAll('#label').forEach(label => {
-        label.style.fontSize = `${newFontSize}px`;
-      });
-    }
-  });
-
-  const mainContainer = document.getElementById('wheel-container');
-  if (mainContainer) {
-    resizeObserver.observe(mainContainer);
-    const initialWidth = mainContainer.offsetWidth;
-    const newFontSize = initialWidth * 0.045;
-    document.querySelectorAll('#label').forEach(label => {
-        label.style.fontSize = `${newFontSize}px`;
-    });
-  }
-  
-  document.getElementById('restart-button').onclick = () => {
-    if (spinning) return;
-    document.getElementById('restart-button').style.display = 'none';
-    
-    document.getElementById('wheel-container').style.display = 'block';
-    drawWheel(wheelCtx, preRenderedWheel, 0);
-    
-    setTimeout(() => {
-       document.getElementById('wheel-container').style.opacity = '1';
-       setTimeout(startCountdown, 400);
-    }, 10);
-  };
-  
+  // Rozpocznij odliczanie
   setTimeout(startCountdown, 400);
 };
 </script>
